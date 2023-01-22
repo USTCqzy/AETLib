@@ -58,6 +58,7 @@ void aetCalculateMRC(size_t tot_mem, size_t granularity, double *mrc) {
     rthCalcMRC(rth_rec, tot_mem, granularity);
     memcpy(mrc, rth_rec->mrc, sizeof(double) * (tot_mem / granularity + 1));
     if (rth_rec->mrc != NULL) free(rth_rec->mrc);
+    rth_rec->mrc = NULL;
 }
 
 /**
