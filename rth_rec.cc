@@ -3,6 +3,9 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <assert.h>
+#include <stdio.h>
+
 /**
  * 比较大小的函数
  */
@@ -112,11 +115,19 @@ void rthCalcMRC(rthRec *rth, size_t tot_memory, size_t PGAP) {
     //    if (rth->rtd[i] > 0 || rth->rtd_del[i] > 0 || rth->read_rtd[i] > 0)
     //        printf("rtd[%d]=%d, read_rtd[%d]=%d, rtd_del[%d]=%d\n", i, rth->rtd[i], i, rth->read_rtd[i], i, rth->rtd_del[i]);
     }
-    rth->mrc = (double *)malloc((tot_memory / PGAP) * sizeof(double) + 10);
-    memset(rth->mrc, 0, tot_memory / PGAP * sizeof(double) + 10);
+    rth->mrc = (double *)malloc((tot_memory / PGAP + 2) * sizeof(double));
+    //rth->mrc = (double *)malloc((tot_memory / PGAP) * sizeof(double) + 10);
+    assert(rth->mrc != NULL);
+    // memset(rth->mrc, 0, tot_memory / PGAP * sizeof(double) + 10);
+    memset(rth->mrc, 0, (tot_memory / PGAP + 2) * sizeof(double));
+
     for (size_t i = 0; i < tot_memory / PGAP + 1; i ++)
         rth->mrc[i] = 1.0;
-    if (read_N == 0) return;
+    
+    if (read_N == 0){
+        printf("read_N == 0\n");
+        return;
+    }
     for (size_t c = PGAP; c <= tot_memory; c += PGAP) {
         while (dT < RTH_RTD_LENGTH) {
     		double d = 1.0 * (rth->rtd[dT] + rth->rtd_del[dT]);
@@ -141,7 +152,7 @@ void rthCalcMRC(rthRec *rth, size_t tot_memory, size_t PGAP) {
         }
         double miss_ratio = (read_N - read_sum - 1.0 * rth->read_rtd[dT] / step * ed) / read_N;
        // if (c / PGAP == 4096) System.out.println("4mb, miss_ratio=" + miss_ratio);
-        rth->mrc[(int)(c / PGAP)] = miss_ratio;
+        rth->mrc[(size_t)(c / PGAP)] = miss_ratio;
     }    
 }
 

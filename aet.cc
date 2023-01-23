@@ -55,7 +55,10 @@ void aetAccessNonUniform(size_t addr, size_t oriSize, size_t curSize, bool isWri
  * double *mrc:         results (MRC) stored in it, must be sure there is enough space to store all the results.
  */ 
 void aetCalculateMRC(size_t tot_mem, size_t granularity, double *mrc) {
+    printf("tot_mem: %zu, granularity: %zu\n", tot_mem, granularity);
+    fflush(stdout);
     rthCalcMRC(rth_rec, tot_mem, granularity);
+    printf("end calc\n");
     memcpy(mrc, rth_rec->mrc, sizeof(double) * (tot_mem / granularity + 1));
     if (rth_rec->mrc != NULL) free(rth_rec->mrc);
     rth_rec->mrc = NULL;
